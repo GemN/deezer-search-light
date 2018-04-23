@@ -1,0 +1,14 @@
+version: '3'
+services:
+  website:
+      image: node:carbon
+      user: node
+      working_dir: '/home/node/app'
+      restart: on-failure:3
+      environment:
+        - NODE_ENV=production
+      volumes:
+        - ./website/:/home/node/app
+      ports:
+        - 4242:4242
+      command: sh -c 'yarn && yarn prod:build && yarn prod'
