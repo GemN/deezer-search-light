@@ -296,7 +296,7 @@ class TracksDataGrid extends PureComponent {
 
   albumImageExtractor = track => track.album && track.album.cover_medium;
 
-  albumTitleExtractor = track => track.album && track.artist.name;
+  albumTitleExtractor = track => track.album && track.album.title;
 
   filterBy = trackFilter => this.setState({ trackFilter });
 
