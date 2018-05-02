@@ -1,2 +1,3 @@
 
 export const SEARCH_TRACK = 'SEARCH_TRACK';
+export const SEARCH_TRACK_QUEUE = 'SEARCH_TRACK_QUEUE';
