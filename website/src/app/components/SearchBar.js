@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import FontAwesome from 'react-fontawesome';
+import { connect } from 'react-redux';
+import { searchTrack } from '../actions/tracks';
 
 const SearchField = styled.input`
   outline: none;
@@ -56,14 +58,14 @@ class SearchBar extends Component {
     this.setState({
       loading: true,
       timeout: setTimeout(async () => {
-        this.props.onSearch(value);
+        this.props.searchTrack(value);
         this.setState({ loading: false });
       }, 300),
     });
   };
 
   props: {
-    onSearch: Function,
+    searchTrack: Function,
     containerStyle: {},
   };
 
@@ -86,4 +88,8 @@ class SearchBar extends Component {
   }
 }
 
-export default SearchBar;
+const mapDispatchToProps = dispatch => ({
+  searchTrack: searchValue => dispatch(searchTrack(searchValue)),
+});
+
+export default connect(null, mapDispatchToProps)(SearchBar);

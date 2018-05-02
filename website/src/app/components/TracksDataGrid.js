@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import axios from 'axios';
 import moment from 'moment';
 import DataGrid from './DataGrid/DataGrid';
-import CardGrid from './CardGrid/CardGrid';
+import CardGrid from './CardGrid/index';
 
 const CoverImg = styled.img`
   margin: 0 8px;
@@ -319,6 +319,40 @@ class TracksDataGrid extends PureComponent {
     </FilterBar>
   );
 
+  renderByTracksByDefault = data => (
+    <DataGrid
+      resizable
+      headerCols={TracksDataGrid.headerCols}
+      currentOrderCol={this.state.currentOrder}
+      onClickHeaderCol={this.onClickHeaderCol}
+      data={data}
+      keyExtractor={this.trackKeyExtractor}
+      onRowClick={this.goToTrackLink}
+      renderCols={this.renderCols}
+    />
+  );
+
+  renderByArtists = data => (
+    <CardGrid
+      data={this.removeDuplicateArtists(data)}
+      rounded
+      keyExtractor={this.trackKeyExtractor}
+      imageExtractor={this.artistImageExtractor}
+      titleExtractor={this.artistTitleExtractor}
+      onClick={this.artistOnClick}
+    />
+  );
+
+  renderByAlbums = data => (
+    <CardGrid
+      data={this.removeDuplicateAlbums(data)}
+      keyExtractor={this.trackKeyExtractor}
+      imageExtractor={this.albumImageExtractor}
+      titleExtractor={this.albumTitleExtractor}
+      onClick={this.albumOnClick}
+    />
+  );
+
   render() {
     const { data } = this.state.fetchedData;
     const { searchValue } = this.props;
@@ -343,40 +377,9 @@ class TracksDataGrid extends PureComponent {
               : this.renderFilterBar()
           }
         </InfosContainer>
-        {
-          trackFilter === 'all' && (data && data.length) ?
-            <DataGrid
-              resizable
-              headerCols={TracksDataGrid.headerCols}
-              currentOrderCol={this.state.currentOrder}
-              onClickHeaderCol={this.onClickHeaderCol}
-              data={data}
-              keyExtractor={this.trackKeyExtractor}
-              onRowClick={this.goToTrackLink}
-              renderCols={this.renderCols}
-            /> : ''
-        }
-        {
-          trackFilter === 'artist' && (data && data.length) ?
-            <CardGrid
-              data={this.removeDuplicateArtists(data)}
-              rounded
-              keyExtractor={this.trackKeyExtractor}
-              imageExtractor={this.artistImageExtractor}
-              titleExtractor={this.artistTitleExtractor}
-              onClick={this.artistOnClick}
-            /> : ''
-        }
-        {
-          trackFilter === 'album' && (data && data.length) ?
-            <CardGrid
-              data={this.removeDuplicateAlbums(data)}
-              keyExtractor={this.trackKeyExtractor}
-              imageExtractor={this.albumImageExtractor}
-              titleExtractor={this.albumTitleExtractor}
-              onClick={this.albumOnClick}
-            /> : ''
-        }
+        {trackFilter === 'all' && (data && data.length) && this.renderByTracksByDefault(data)}
+        {trackFilter === 'artist' && (data && data.length) && this.renderByArtists(data)}
+        {trackFilter === 'album' && (data && data.length) && this.renderByAlbums(data)}
       </TracksDataGridContainer>
     );
   }

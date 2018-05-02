@@ -1,19 +1,14 @@
 import React, { Component } from 'react';
-import styled from 'styled-components';
-import Card from '../Card';
+import Card from '../../blocks/Card';
 
-const CardGridContainer = styled.div`
-  width: 100%;
-  min-width: 900px;
-  padding: 0;
-`;
+// blocks
+import Container from './Container';
 
 class CardGrid extends Component {
   static defaultProps = {
     keyExtractor: item => item.id,
   };
 
-  // todo passe redux
   shouldComponentUpdate(nextProps) {
     if (JSON.stringify(this.props.data) !== JSON.stringify(nextProps.data)) {
       return true;
@@ -42,9 +37,9 @@ class CardGrid extends Component {
   render() {
     const { data } = this.props;
     return (
-      <CardGridContainer>
+      <Container>
         {data && data.map(this.renderCard)}
-      </CardGridContainer>
+      </Container>
     );
   }
 }
