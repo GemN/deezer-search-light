@@ -11,11 +11,13 @@ import IconContainer from './IconContainer';
 class SearchBar extends Component {
   onSearchFieldChange = (e) => {
     const { value } = e.target;
-    this.props.searchTrackQueue({
-      timeout: setTimeout(() => {
-        this.props.searchTrack(value);
-      }, 400),
-    });
+    if (this.timeout) {
+      clearTimeout(this.timeout);
+    }
+    this.props.searchTrackQueue();
+    this.timeout = setTimeout(() => {
+      this.props.searchTrack(value);
+    }, 300);
   };
 
   props: {
@@ -49,7 +51,7 @@ const mapStateToProps = ({ loading }) => ({
 
 const mapDispatchToProps = dispatch => ({
   searchTrack: searchValue => dispatch(searchTrack(searchValue)),
-  searchTrackQueue: searchTimeout => dispatch(searchTrackQueue(searchTimeout)),
+  searchTrackQueue: () => dispatch(searchTrackQueue()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SearchBar);

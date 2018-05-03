@@ -1,37 +1,11 @@
 import React, { Component } from 'react';
-import styled from 'styled-components';
-import DataGridHeader from './DataGridHeader';
 
-const DataGridContainer = styled.table`
-  width: 100%;
-  border-collapse: collapse;
-  table-layout: fixed;
-`;
-
-const DataGridContent = styled.tbody`
-
-`;
-
-const DataGridRow = styled.tr`
-  color: #32323d;
-  height: 52px;
-  cursor: pointer;
-  border-top: 1px solid #EFEFF2;
-  transition: 0.15s;
-  &:hover {
-    background-color: #EFEFF2;
-  }
-`;
-
-const DataGridCol = styled.td`
-  font-size: 14px;
-  line-height: 20px;
-  font-weight: 400;
-  padding-right: 2px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-`;
+// blocks
+import Header from './Header';
+import Container from './Container';
+import Body from './Body/Content';
+import BodyRow from './Body/Row';
+import BodyCol from './Body/Col';
 
 class DataGrid extends Component {
   static defaultProps = {
@@ -58,37 +32,42 @@ class DataGrid extends Component {
   };
 
   renderRow = item => (
-    <DataGridRow onClick={() => this.props.onRowClick(item)} key={this.props.keyExtractor(item)}>
+    <BodyRow onClick={() => this.props.onRowClick(item)} key={this.props.keyExtractor(item)}>
       {
           this.props.headerCols.map((header) => {
             const customColRender = this.props.renderCols[header.key];
             return (
-              <DataGridCol key={header.key}>
+              <BodyCol key={header.key}>
                 {customColRender ? customColRender(item) : item[header.key]}
-              </DataGridCol>
+              </BodyCol>
             );
           })
         }
 
-    </DataGridRow>
+    </BodyRow>
   );
 
   render() {
     const { data } = this.props;
     return (
-      <DataGridContainer>
-        <DataGridHeader
+      <Container>
+        <Header
           resizable={this.props.resizable}
           currentOrderCol={this.props.currentOrderCol}
           headerCols={this.props.headerCols}
           onClickHeaderCol={this.props.onClickHeaderCol}
         />
-        <DataGridContent>
+        <Body>
           {data && data.map(item => this.renderRow(item))}
-        </DataGridContent>
-      </DataGridContainer>
+        </Body>
+      </Container>
     );
   }
 }
+
+DataGrid.Header = Header;
+DataGrid.Body = Body;
+DataGrid.BodyRow = BodyRow;
+DataGrid.BodyCol = BodyCol;
 
 export default DataGrid;

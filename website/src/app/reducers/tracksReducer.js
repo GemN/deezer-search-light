@@ -4,7 +4,6 @@ const initialState = {
   searchValue: '',
   tracks: [],
   loading: false,
-  timeout: null,
 };
 
 const rootReducer = (state = initialState, action) => {
@@ -12,10 +11,7 @@ const rootReducer = (state = initialState, action) => {
     case SEARCH_TRACK:
       return { ...state, searchValue: action.payload, loading: false };
     case SEARCH_TRACK_QUEUE:
-      if (state.timeout) {
-        clearTimeout(state.timeout);
-      }
-      return { ...state, timeout: action.payload, loading: true };
+      return { ...state, loading: true };
     default:
       return state;
   }

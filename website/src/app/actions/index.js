@@ -1,1 +1,1 @@
-export { searchTrack } from './tracks';
+export { searchTrack, searchTrackQueue } from './tracks';

@@ -2,8 +2,12 @@ import React, { PureComponent } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 import moment from 'moment';
-import DataGrid from './DataGrid/DataGrid';
-import CardGrid from './CardGrid/index';
+import DataGrid from '../DataGrid/index';
+import CardGrid from '../CardGrid/index';
+
+// blocks
+import FilterByArtists from './FilterByArtists';
+import FilterByAlbums from './FilterByAlbums';
 
 const CoverImg = styled.img`
   margin: 0 8px;
@@ -263,10 +267,6 @@ class TracksDataGrid extends PureComponent {
     }
   };
 
-  removeDuplicateArtists = data => [...((new Map(data.map(o => [o.artist.id, o]))).values())];
-
-  removeDuplicateAlbums = data => [...((new Map(data.map(o => [o.album.id, o]))).values())];
-
   goToTrackLink = (track) => {
     const winRef = window.open();
     winRef.location = track.link;
@@ -289,14 +289,6 @@ class TracksDataGrid extends PureComponent {
   };
 
   trackKeyExtractor = track => track.id;
-
-  artistImageExtractor = track => track.artist && track.artist.picture_medium;
-
-  artistTitleExtractor = track => track.artist && track.artist.name;
-
-  albumImageExtractor = track => track.album && track.album.cover_medium;
-
-  albumTitleExtractor = track => track.album && track.album.title;
 
   filterBy = trackFilter => this.setState({ trackFilter });
 
@@ -332,26 +324,9 @@ class TracksDataGrid extends PureComponent {
     />
   );
 
-  renderByArtists = data => (
-    <CardGrid
-      data={this.removeDuplicateArtists(data)}
-      rounded
-      keyExtractor={this.trackKeyExtractor}
-      imageExtractor={this.artistImageExtractor}
-      titleExtractor={this.artistTitleExtractor}
-      onClick={this.artistOnClick}
-    />
-  );
+  renderByArtists = tracks => <FilterByArtists tracks={tracks} />;
 
-  renderByAlbums = data => (
-    <CardGrid
-      data={this.removeDuplicateAlbums(data)}
-      keyExtractor={this.trackKeyExtractor}
-      imageExtractor={this.albumImageExtractor}
-      titleExtractor={this.albumTitleExtractor}
-      onClick={this.albumOnClick}
-    />
-  );
+  renderByAlbums = tracks => <FilterByAlbums tracks={tracks} />;
 
   render() {
     const { data } = this.state.fetchedData;
@@ -384,5 +359,8 @@ class TracksDataGrid extends PureComponent {
     );
   }
 }
+
+TracksDataGrid.FilterByArtists = FilterByArtists;
+TracksDataGrid.FilterByAlbums = FilterByAlbums;
 
 export default TracksDataGrid;
