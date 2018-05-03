@@ -1,5 +1,4 @@
 import {
-  SEARCH_TRACK,
   SEARCH_TRACK_QUEUE,
   SEARCH_TRACK_QUERY,
   FILTER_TRACKS_BY,
@@ -9,18 +8,25 @@ import {
   TRACKS_QUERY_SUCCESS,
 } from '../constants/actionsTypes';
 
+import { mergeTracksData } from '../utils/index';
+
 const initialState = {
   searchValue: '',
   filterBy: 'all',
   currentOrder: null,
   data: [],
   busy: false,
+  lastIndex: 0,
 };
 
 const tracks = (state = initialState, action) => {
   switch (action.type) {
     case TRACKS_QUERY_SUCCESS:
-      return { ...state, data: action.data };
+      return {
+        ...state,
+        data: action.loadMore ? mergeTracksData(state.data, action.data) : action.data,
+        lastIndex: action.index,
+      };
     case SEARCH_TRACK_QUERY:
       return { ...state, searchValue: action.searchValue, busy: false };
     case SEARCH_TRACK_QUEUE:
@@ -28,7 +34,7 @@ const tracks = (state = initialState, action) => {
     case FILTER_TRACKS_BY:
       return { ...state, filterBy: action.filterBy };
     case ORDER_TRACKS_BY:
-      return { ...state, currentOrder: action.order };
+      return { ...state, currentOrder: action.order, lastIndex: 0 };
     default:
       return state;
   }

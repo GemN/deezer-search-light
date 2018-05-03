@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
+import { loadMoreTracks } from '../../actions/tracks';
 
 // blocks
 import FilterByArtists from './FilterByArtists';
@@ -13,15 +14,6 @@ import InfosContainer from './InfosContainer';
 import InfosContainerTitle from './InfosContainerTitle';
 
 class TracksDataGrid extends PureComponent {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      lastIndex: 0,
-      currentOrder: null,
-    };
-  }
-
   componentDidMount() {
     window.addEventListener('scroll', this.onScroll, false);
   }
@@ -30,45 +22,17 @@ class TracksDataGrid extends PureComponent {
     window.removeEventListener('scroll', this.onScroll, false);
   }
 
-  onScroll = async () => {
-    const { data } = this.state.fetchedData;
-    if ((window.innerHeight + window.scrollY) >= (document.body.offsetHeight - 300)
-      && (data && data.length) && this.state.fetchedData.next) {
-      if (!this.state.loading) {
-        this.setState({ loading: true });
-        const fetchedDataNext = await this.fetchSearchResults({ index: this.state.lastIndex + 25 });
-        const updatedData = {
-          ...fetchedDataNext,
-          data: [...data, ...fetchedDataNext.data],
-        };
-        updatedData.data = [...((
-          new Map(updatedData.data.map(o => [o.id, o]))).values())];
-        this.setState({
-          fetchedData: updatedData,
-          loading: false,
-          lastIndex: this.state.lastIndex + 25,
-        });
-      }
-    }
-  };
+  onScroll = () => {
+    const { data, next } = this.props.tracks;
 
-  orderByCol = async (colKey, orderKey) => {
-    try {
-      this.setState({ loading: true });
-      const fetchedData = await this.fetchSearchResults({ orderKey });
-      this.setState({
-        fetchedData,
-        loading: false,
-        currentOrder: { colKey, orderKey },
-        lastIndex: 0,
-      });
-    } catch (e) {
-      console.error(e);
-      this.setState({ error: 'Sorry... we couldn\'t load any tracks', loading: false });
+    if ((window.scrollY - window.innerHeight) >= (document.body.offsetHeight - 200)
+      && (data && data.length) && next) {
+      this.props.loadMoreTracks();
     }
   };
 
   props: {
+    loadMoreTracks: Function,
     searchValue: string,
     trackFilter: string,
     tracks: [],
@@ -83,10 +47,7 @@ class TracksDataGrid extends PureComponent {
       case 'album':
         return <FilterByAlbums tracks={tracks} />;
       default:
-        return (<DefaultGrid
-          currentOrderCol={this.state.currentOrder}
-          tracks={tracks}
-        />);
+        return (<DefaultGrid tracks={tracks} />);
     }
   };
 
@@ -145,7 +106,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  searchTrack: searchValue => dispatch(searchTrack({ searchValue })),
+  loadMoreTracks: () => dispatch(loadMoreTracks()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps())(TracksDataGrid);
+export default connect(mapStateToProps, mapDispatchToProps)(TracksDataGrid);
