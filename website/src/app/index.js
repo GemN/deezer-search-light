@@ -3,14 +3,13 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { injectLayoutBaseCSS } from 'styled-bootstrap-grid';
-import store from './store';
+import configureStore from './store';
 import Home from './routes/Home';
 
 if (process.env.NODE_ENV !== 'production') {
   const { whyDidYouUpdate } = require('why-did-you-update');
   whyDidYouUpdate(React);
 }
-
 
 const customCSS = `
   body {
@@ -19,6 +18,8 @@ const customCSS = `
    font-family: "Open Sans", Arial, sans-serif;
   }
 `;
+
+const store = configureStore();
 
 injectLayoutBaseCSS(customCSS);
 
@@ -32,3 +33,5 @@ ReactDOM.render(
   </Provider>,
   document.getElementById('root'),
 );
+
+export { store };

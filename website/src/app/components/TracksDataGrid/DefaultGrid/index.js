@@ -1,6 +1,8 @@
 import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
 import moment from 'moment';
 import DataGrid from '../../DataGrid/index';
+import { orderBy } from '../../../actions/tracks';
 
 // blocks
 import CoverImageCol from './CoverImageCol';
@@ -66,8 +68,25 @@ class DefaultGrid extends PureComponent {
     };
   }
 
-  onClickHeaderCol = async (header) => {
-    // dispatch redux
+  onClickHeaderCol = (header) => {
+    const { currentOrder } = this.props;
+    let orderKey = null;
+    if (currentOrder && (currentOrder.colKey === header.key)) {
+      switch (currentOrder.orderKey) {
+        case header.ascKey:
+          orderKey = header.descKey;
+          break;
+        case header.descKey:
+          orderKey = null;
+          break;
+        default:
+          orderKey = header.ascKey;
+          break;
+      }
+    } else {
+      orderKey = header.ascKey;
+    }
+    this.props.orderBy(header.key, orderKey);
   };
 
   goToTrackLink = (track) => {
@@ -96,6 +115,7 @@ class DefaultGrid extends PureComponent {
   props: {
     tracks: [],
     currentOrder: string,
+    orderBy: Function,
   };
 
   render() {
@@ -103,8 +123,8 @@ class DefaultGrid extends PureComponent {
       <DataGrid
         resizable
         headerCols={DefaultGrid.headerCols}
-        currentOrderCol={this.props.currentOrder} // props redux
-        onClickHeaderCol={this.onClickHeaderCol} // dispatch redux
+        currentOrderCol={this.props.currentOrder}
+        onClickHeaderCol={this.onClickHeaderCol}
         data={this.props.tracks}
         keyExtractor={this.trackKeyExtractor}
         onRowClick={this.goToTrackLink}
@@ -114,4 +134,12 @@ class DefaultGrid extends PureComponent {
   }
 }
 
-export default DefaultGrid;
+const mapStateToProps = state => ({
+  currentOrder: state.tracks.currentOrder,
+});
+
+const mapDispatchToProps = dispatch => ({
+  orderBy: (colKey, orderKey) => dispatch(orderBy({ colKey, orderKey })),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(DefaultGrid);

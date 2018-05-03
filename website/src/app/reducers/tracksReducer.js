@@ -1,20 +1,55 @@
-import { SEARCH_TRACK, SEARCH_TRACK_QUEUE } from '../constants/actionsTypes';
+import {
+  SEARCH_TRACK,
+  SEARCH_TRACK_QUEUE,
+  SEARCH_TRACK_QUERY,
+  FILTER_TRACKS_BY,
+  ORDER_TRACKS_BY,
+  TRACKS_QUERY_ERROR,
+  TRACKS_QUERY_LOADING,
+  TRACKS_QUERY_SUCCESS,
+} from '../constants/actionsTypes';
 
 const initialState = {
   searchValue: '',
-  tracks: [],
-  loading: false,
+  filterBy: 'all',
+  currentOrder: null,
+  data: [],
+  busy: false,
 };
 
-const rootReducer = (state = initialState, action) => {
+const tracks = (state = initialState, action) => {
   switch (action.type) {
-    case SEARCH_TRACK:
-      return { ...state, searchValue: action.payload, loading: false };
+    case TRACKS_QUERY_SUCCESS:
+      return { ...state, data: action.data };
+    case SEARCH_TRACK_QUERY:
+      return { ...state, searchValue: action.searchValue, busy: false };
     case SEARCH_TRACK_QUEUE:
-      return { ...state, loading: true };
+      return { ...state, busy: action.busy };
+    case FILTER_TRACKS_BY:
+      return { ...state, filterBy: action.filterBy };
+    case ORDER_TRACKS_BY:
+      return { ...state, currentOrder: action.order };
     default:
       return state;
   }
 };
 
-export default rootReducer;
+const tracksQueryError = (state = false, action) => {
+  switch (action.type) {
+    case TRACKS_QUERY_ERROR:
+      return action.error;
+    default:
+      return state;
+  }
+};
+
+const tracksQueryLoading = (state = false, action) => {
+  switch (action.type) {
+    case TRACKS_QUERY_LOADING:
+      return action.loading;
+    default:
+      return state;
+  }
+};
+
+export { tracks, tracksQueryError, tracksQueryLoading };

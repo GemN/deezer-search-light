@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import FontAwesome from 'react-fontawesome';
 import { connect } from 'react-redux';
 import { searchTrack, searchTrackQueue } from '../../actions/tracks';
+import FontAwesome from '../Pure/FontAwesome';
 
 // blocks
 import Container from './Container';
@@ -22,11 +22,13 @@ class SearchBar extends Component {
 
   props: {
     loading: boolean,
+    busy: boolean,
     searchTrack: Function,
     searchTrackQueue: Function,
   };
 
   render() {
+    const { loading, busy } = this.props;
     return (
       <Container>
         <Field
@@ -35,7 +37,7 @@ class SearchBar extends Component {
         />
         <IconContainer>
           {
-            this.props.loading ?
+            (loading || busy) ?
               <FontAwesome name="spinner" spin />
               : <FontAwesome name="search" />
           }
@@ -45,12 +47,13 @@ class SearchBar extends Component {
   }
 }
 
-const mapStateToProps = ({ loading }) => ({
-  loading,
+const mapStateToProps = state => ({
+  loading: state.tracksQueryLoading,
+  busy: state.tracks.busy,
 });
 
 const mapDispatchToProps = dispatch => ({
-  searchTrack: searchValue => dispatch(searchTrack(searchValue)),
+  searchTrack: searchValue => dispatch(searchTrack({ searchValue })),
   searchTrackQueue: () => dispatch(searchTrackQueue()),
 });
 

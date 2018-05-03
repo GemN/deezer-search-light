@@ -17,6 +17,9 @@ class DataGrid extends Component {
     if (JSON.stringify(this.props.data) !== JSON.stringify(nextProps.data)) {
       return true;
     }
+    if (nextProps.currentOrderCol !== this.props.currentOrderCol) {
+      return true;
+    }
     return false;
   }
 

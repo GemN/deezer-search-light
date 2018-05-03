@@ -16,9 +16,7 @@ class Home extends PureComponent {
 
   renderTrackList = () => (
     <TrackDataGridContainer>
-      <TracksDataGrid
-        searchValue={this.props.searchValue}
-      />
+      <TracksDataGrid />
     </TrackDataGridContainer>
   );
 
@@ -38,8 +36,8 @@ class Home extends PureComponent {
   }
 }
 
-const mapStateToProps = ({ searchValue }) => ({
-  searchValue,
+const mapStateToProps = state => ({
+  searchValue: state.tracks.searchValue,
 });
 
 export default connect(mapStateToProps)(Home);
